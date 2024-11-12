@@ -1,13 +1,13 @@
-package org.projet.bookmycourt;
+package org.projet.administrationservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BookmycourtApplication {
+public class AdministrationServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BookmycourtApplication.class, args);
+        SpringApplication.run(AdministrationServiceApplication.class, args);
     }
 
 }

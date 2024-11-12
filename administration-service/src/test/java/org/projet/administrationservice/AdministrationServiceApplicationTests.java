@@ -1,10 +1,10 @@
-package org.projet.bookmycourt;
+package org.projet.administrationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BookmycourtApplicationTests {
+class AdministrationServiceApplicationTests {
 
     @Test
     void contextLoads() {

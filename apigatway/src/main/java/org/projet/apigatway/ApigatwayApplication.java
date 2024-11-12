@@ -1,13 +1,13 @@
-package org.projet.bookmycourt;
+package org.projet.apigatway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BookmycourtApplication {
+public class ApigatwayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BookmycourtApplication.class, args);
+        SpringApplication.run(ApigatwayApplication.class, args);
     }
 
 }

@@ -1,10 +1,10 @@
-package org.projet.bookmycourt;
+package org.projet.registryservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BookmycourtApplicationTests {
+class RegistryServiceApplicationTests {
 
     @Test
     void contextLoads() {
