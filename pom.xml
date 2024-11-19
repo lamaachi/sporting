@@ -41,7 +41,15 @@
         </dependency>
     </dependencies>
     <modules>
-
+        <module>admin-server</module>
+        <module>administration-service</module>
+        <module>apigatway</module>
+        <module>centre-service</module>
+        <module>config-service</module>
+        <module>paiment-service</module>
+        <module>registry-service</module>
+        <module>user-service</module>
+        <module>reservation-service</module>
     </modules>
     <dependencyManagement>
 
