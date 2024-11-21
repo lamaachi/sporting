@@ -1,23 +1,39 @@
-version: '3.8'
-
+version: "1.0"
 services:
-  centre-service:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/centredb
-      - SPRING_DATASOURCE_USERNAME=centreuser
-      - SPRING_DATASOURCE_PASSWORD=yourpassword
-    depends_on:
-      - db
+  # Config Server Service
+#  config-server:
+#    build:
+#      context: ./config-server
+#    ports:
+#      - "8888:8888"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: native
+#      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/app/config-repo
+#    volumes:
+#      - ./config-repo:/app/config-repo
 
-  db:
+  # Center Service
+  centre-service:
+    build:
+      context: ./centre-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+#      - config-server
+      - center-service-db
+  # PostgreSQL Database
+  center-service-db:
     image: postgres:13
     environment:
-      - POSTGRES_DB=centredb
-      - POSTGRES_USER=centreuser
-      - POSTGRES_PASSWORD=yourpassword
+      POSTGRES_DB: centredb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lamaachi
     ports:
       - "5432:5432"
     volumes:

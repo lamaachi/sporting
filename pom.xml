@@ -45,7 +45,7 @@
         <module>administration-service</module>
         <module>apigatway</module>
         <module>centre-service</module>
-        <module>config-service</module>
+        <module>config-server</module>
         <module>paiment-service</module>
         <module>registry-service</module>
         <module>user-service</module>
