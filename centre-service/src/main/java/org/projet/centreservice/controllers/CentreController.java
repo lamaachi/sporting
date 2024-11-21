@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * REST controller for managing CentreSportif entities.
  * Provides endpoints for CRUD operations.
- *
+ *  Test
  * @author lamaachi
  */
 @RestController
