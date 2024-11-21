@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+
 public class CentreSportif {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +26,5 @@ public class CentreSportif {
 
     @OneToMany(mappedBy = "centreSportif", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Equipement> equipements;
+
 }
