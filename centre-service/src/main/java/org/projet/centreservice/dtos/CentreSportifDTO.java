@@ -1,8 +1,10 @@
 package org.projet.centreservice.dtos;
 
 import lombok.*;
+import org.projet.centreservice.entities.Terrain;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lamaachi
@@ -16,6 +18,4 @@ public class CentreSportifDTO {
     private String nom;
     private String adresse;
     private String horaires;
-    private List<TerrainDTO> terrains;
-    private List<EquipementDTO> equipements;
 }

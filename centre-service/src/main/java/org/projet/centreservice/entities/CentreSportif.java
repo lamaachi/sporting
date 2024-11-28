@@ -4,15 +4,17 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author lamaachi
  **/
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Data
+@Getter
+@Setter
 public class CentreSportif {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +22,4 @@ public class CentreSportif {
     private String nom;
     private String adresse;
     private String horaires;
-
-    @OneToMany(mappedBy = "centreSportif", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Terrain> terrains;
-
-    @OneToMany(mappedBy = "centreSportif", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Equipement> equipements;
-
 }
