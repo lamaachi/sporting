@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @author lamaachi
  **/
+@Repository
 public interface CentreSportifRepository extends JpaRepository<CentreSportif, Integer> {
 
 }

@@ -23,6 +23,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
     depends_on:
 #      - config-server
