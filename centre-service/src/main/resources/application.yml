@@ -1,19 +1,13 @@
 spring:
   application:
     name: centre-service
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/centredb}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:lamaachi}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create} # You can use 'validate', 'update', 'create', or 'create-drop'
-    show-sql: true
-
-#  config:
-#    import: optional:configserver:http://localhost:8888
+  cloud:
+    config:
+      enable: true
+  config:
+      import: optional:configserver:http://localhost:8888
 
 server:
-  port: 8082
+  port: 8085
+
+

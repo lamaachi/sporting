@@ -1,12 +1,39 @@
 server:
-  port: 8888 # Port for the config server
+  port: 8888
 
 spring:
   application:
-    name: config-service
+    name: config-server
   cloud:
     config:
       server:
         git:
-          uri: https://github.com/lamaachi/sporting-config-repo # Git repository for configuration files
-          default-label: main # Branch containing configuration files
+          uri: https://github.com/lamaachi/sporting-config-repo
+      enabled: true
+    discovery:
+      enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true  # Set this to true or false as needed
+  client:
+    service-url:
+      defaultZone: ${DISCOVER-SERVER-URL:http://localhost:8761/eureka/}  # Use this for Eureka URL
+
+
+
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.config.server: DEBUG  # DEBUG level can be useful for troubleshooting
+
+# Optional: Management and Health settings
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
