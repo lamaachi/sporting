@@ -1,5 +1,5 @@
 server:
-  port: 8888
+  port: 8889
 
 spring:
   application:
@@ -9,7 +9,8 @@ spring:
       server:
         git:
           uri: https://github.com/lamaachi/sporting-config-repo
-      enabled: true
+        default-label: main
+        enabled: true
     discovery:
       enabled: true
 eureka:

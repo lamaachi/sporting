@@ -1,11 +1,13 @@
 package org.projet.centreservice.controllers;
 
 import org.projet.centreservice.dtos.CentreSportifDTO;
+import org.projet.centreservice.dtos.TerrainAssignmentEvent;
 import org.projet.centreservice.entities.CentreSportif;
 import org.projet.centreservice.services.CentreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +18,18 @@ import java.util.List;
  *  Test
  * @author lamaachi
  */
+
 @RestController
 @RequestMapping("/api/centres")
 public class CentreController {
 
-    @Autowired
     private CentreService centreSportifService;
+    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
+
+    public CentreController(KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate,CentreService centreService) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.centreSportifService = centreService;
+    }
 
     // Create a new CentreSportif
     @PostMapping
@@ -64,5 +72,25 @@ public class CentreController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/{centreId}/assign-terrain")
+    public ResponseEntity<String> assignTerrainToCentre(@PathVariable int centreId, @RequestBody Long terrainId) {
+        try {
+            // Assign terrain to centre in the database
+            centreSportifService.assignTerrainToCentre(centreId, terrainId);
+
+            // Publish Kafka event
+            TerrainAssignmentEvent event = new TerrainAssignmentEvent();
+            event.setCentreId(centreId);
+            event.setTerrainId(terrainId);
+            event.setAssignmentStatus("ASSIGNED");
+
+            kafkaTemplate.send("terrain-assignment-topic", event);
+
+            return ResponseEntity.ok("Terrain assigned to centre and event published to Kafka.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error assigning terrain: " + e.getMessage());
+        }
     }
 }

@@ -22,4 +22,7 @@ public class CentreSportif {
     private String nom;
     private String adresse;
     private String horaires;
+
+    @ElementCollection
+    private List<Integer> assignedTerrains;  // List of terrain IDs assigned to this centre
 }

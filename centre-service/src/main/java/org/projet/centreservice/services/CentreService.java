@@ -1,6 +1,7 @@
 package org.projet.centreservice.services;
 
 import org.projet.centreservice.dtos.CentreSportifDTO;
+import org.projet.centreservice.dtos.TerrainAssignmentEvent;
 import org.projet.centreservice.entities.CentreSportif;
 import org.projet.centreservice.repositories.CentreSportifRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,33 @@ import java.util.Optional;
 @Service
 public class CentreService {
 
-    @Autowired
     private CentreSportifRepository centreSportifRepository;
+
+    public CentreService(CentreSportifRepository centreSportifRepository) {
+        this.centreSportifRepository = centreSportifRepository;
+    }
+
+    // This method assigns a terrain to a centre
+    public void assignTerrainToCentre(TerrainAssignmentEvent event) {
+        // 1. Find the centre by its ID
+        CentreSportif centre = centreSportifRepository.findById(event.getCentreId())
+                .orElseThrow(() -> new RuntimeException("Centre not found"));
+
+        // 2. Check if terrain is already assigned to this centre (optional)
+        // If the centre has a method to check terrains, you can validate this step
+
+        // 3. Update the centre's terrain details
+        // You can either add this terrain to the centre’s list of terrains or assign a reference (if one-to-many relationship)
+
+        // Example of adding terrain ID to centre (assuming you have a list of terrain IDs in the CentreSportif model)
+        centre.getAssignedTerrains().add(event.getTerrainId());
+
+        // 4. Save the updated centre back to the database
+        centreSportifRepository.save(centre);
+
+        // Log or output the assignment
+        System.out.println("Terrain " + event.getTerrainId() + " assigned to Centre " + event.getCentreId());
+    }
 
     // Create CentreSportif
     public CentreSportif createCentreSportif(CentreSportifDTO centreSportifDTO) {
