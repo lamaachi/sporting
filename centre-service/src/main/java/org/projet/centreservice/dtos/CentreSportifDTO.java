@@ -1,7 +1,6 @@
 package org.projet.centreservice.dtos;
 
 import lombok.*;
-//import org.projet.centreservice.entities.Terrain;
 
 import java.util.List;
 import java.util.Set;
