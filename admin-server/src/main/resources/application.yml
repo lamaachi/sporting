@@ -1,0 +1,16 @@
+server:
+  port: 8080 # Admin server port
+
+spring:
+  application:
+    name: admin-server
+
+  security:
+    user:
+      name: admin # Default username
+      password: admin # Default password
+
+spring.boot.admin:
+  ui:
+    title: Centre Service Monitoring
+

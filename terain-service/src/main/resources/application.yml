@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: terain-service
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080/applications
+  cloud:
+    discovery:
+      enabled: true
+    config:
+      enabled: true
+  config:
+    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
+  rabbitmq:
+    host: localhost      # RabbitMQ host
+    port: 5672           # RabbitMQ port
+    username: guest      # RabbitMQ default username
+    password: guest      # RabbitMQ default password
+    virtual-host: /      # RabbitMQ virtual host (default is '/')
+    listener:
+      simple:
+        retry:
+          enabled: true  # Enable retry mechanism for message consumption
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 2.0
+      acknowledge-mode: auto  # Acknowledge messages automatically
+  eureka:
+    client:
+      service-url:
+        defaultZone: ${DISCOVER-SERVER-URL:http://localhost:8761/eureka/}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/teraindb}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:lamaachi}
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update} # You can use 'validate', 'update', 'create', or 'create-drop'
+      show-sql: true
+  instance:
+    prefer-ip-address: true
