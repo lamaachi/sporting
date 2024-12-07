@@ -1,5 +1,5 @@
 server:
-  port: 8889
+  port: 9000
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/lamaachi/sporting-config-repo
+          uri: ${SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS:https://github.com/lamaachi/sporting-config-repo}
         default-label: main
         enabled: true
     discovery:

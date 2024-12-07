@@ -7,7 +7,7 @@ import org.projet.centreservice.services.CentreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +24,9 @@ import java.util.List;
 public class CentreController {
 
     private CentreService centreSportifService;
-    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
+//    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
 
-    public CentreController(KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate,CentreService centreService) {
-        this.kafkaTemplate = kafkaTemplate;
+    public CentreController(CentreService centreService) {
         this.centreSportifService = centreService;
     }
 
@@ -35,7 +34,7 @@ public class CentreController {
     @PostMapping
     public ResponseEntity<CentreSportif> createCentreSportif(@RequestBody CentreSportifDTO centreSportifDTO) {
         CentreSportif createdCentre = centreSportifService.createCentreSportif(centreSportifDTO);
-        return new ResponseEntity<>(createdCentre, HttpStatus.CREATED);
+        return new ResponseEntity<CentreSportif>(createdCentre, HttpStatus.CREATED);
     }
 
     // Get all CentreSportifs
@@ -49,9 +48,9 @@ public class CentreController {
     public ResponseEntity<CentreSportif> getCentreSportifById(@PathVariable int id) {
         CentreSportif centreSportif = centreSportifService.getCentreSportifById(id);
         if (centreSportif != null) {
-            return new ResponseEntity<>(centreSportif, HttpStatus.OK);
+            return new ResponseEntity<CentreSportif>(centreSportif, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<CentreSportif>(HttpStatus.NOT_FOUND);
     }
 
     // Update CentreSportif by ID
@@ -59,9 +58,9 @@ public class CentreController {
     public ResponseEntity<CentreSportif> updateCentreSportif(@PathVariable int id, @RequestBody CentreSportifDTO centreSportifDTO) {
         CentreSportif updatedCentre = centreSportifService.updateCentreSportif(id, centreSportifDTO);
         if (updatedCentre != null) {
-            return new ResponseEntity<>(updatedCentre, HttpStatus.OK);
+            return new ResponseEntity<CentreSportif>(updatedCentre, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<CentreSportif>(HttpStatus.NOT_FOUND);
     }
 
     // Delete CentreSportif by ID
@@ -69,28 +68,30 @@ public class CentreController {
     public ResponseEntity<Void> deleteCentreSportif(@PathVariable int id) {
         boolean isDeleted = centreSportifService.deleteCentreSportif(id);
         if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/{centreId}/assign-terrain")
-    public ResponseEntity<String> assignTerrainToCentre(@PathVariable int centreId, @RequestBody Long terrainId) {
+    public ResponseEntity<String> assignTerrainToCentre(@PathVariable int centreId, @RequestBody int terrainId) {
         try {
-            // Assign terrain to centre in the database
-            centreSportifService.assignTerrainToCentre(centreId, terrainId);
-
-            // Publish Kafka event
+            // Create the event object
             TerrainAssignmentEvent event = new TerrainAssignmentEvent();
             event.setCentreId(centreId);
             event.setTerrainId(terrainId);
-            event.setAssignmentStatus("ASSIGNED");
+            event.setAssignmentStatus("ASSIGNED"); // Initially set the status as ASSIGNED
 
-            kafkaTemplate.send("terrain-assignment-topic", event);
+            // Call the service to assign the terrain
+            centreSportifService.assignTerrainToCentre(event);
+
+            // Publish the event to Kafka
+//            kafkaTemplate.send("terrain-assignment-topic", event);
 
             return ResponseEntity.ok("Terrain assigned to centre and event published to Kafka.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error assigning terrain: " + e.getMessage());
         }
     }
+
 }

@@ -5,7 +5,7 @@ import org.projet.terainservice.dtos.TerrainDTO;
 import org.projet.terainservice.entities.Terrain;
 import org.projet.terainservice.repositories.TerrainRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +16,11 @@ import java.util.stream.Collectors;
 public class TerrainService {
 
     private final TerrainRepository terrainRepository;
-    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
+//    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
 
     @Autowired
-    public TerrainService(TerrainRepository terrainRepository, KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate) {
+    public TerrainService(TerrainRepository terrainRepository) {
         this.terrainRepository = terrainRepository;
-        this.kafkaTemplate = kafkaTemplate;
     }
 
     // Get all terrains
@@ -67,19 +66,19 @@ public class TerrainService {
     }
 
     // Assign a terrain to a centre and send a Kafka event
-    public void assignTerrainToCentre(TerrainAssignmentEvent event) {
-        Optional<Terrain> optionalTerrain = terrainRepository.findById(event.getTerrainId());
-        if (optionalTerrain.isPresent()) {
-            Terrain terrain = optionalTerrain.get();
-            terrain.setCentreId(event.getCentreId());
-            terrainRepository.save(terrain);
-
-            // Send the assignment event to Kafka
-            kafkaTemplate.send("terrain-assignment-topic", event);
-        } else {
-            throw new RuntimeException("Terrain not found with id: " + event.getTerrainId());
-        }
-    }
+//    public void assignTerrainToCentre(TerrainAssignmentEvent event) {
+//        Optional<Terrain> optionalTerrain = terrainRepository.findById(event.getTerrainId());
+//        if (optionalTerrain.isPresent()) {
+//            Terrain terrain = optionalTerrain.get();
+//            terrain.setCentreId(event.getCentreId());
+//            terrainRepository.save(terrain);
+//
+//            // Send the assignment event to Kafka
+//            kafkaTemplate.send("terrain-assignment-topic", event);
+//        } else {
+//            throw new RuntimeException("Terrain not found with id: " + event.getTerrainId());
+//        }
+//    }
 
     // Convert Terrain entity to DTO
     private TerrainDTO convertToDTO(Terrain terrain) {

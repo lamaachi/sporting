@@ -1,12 +1,6 @@
 package org.projet.terainservice.dtos;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
-import java.util.Set;
 
 /**
  * @author lamaachi

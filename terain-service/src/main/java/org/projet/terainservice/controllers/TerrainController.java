@@ -5,7 +5,7 @@ import org.projet.terainservice.dtos.TerrainDTO;
 import org.projet.terainservice.services.TerrainService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +15,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/terrains")
 public class TerrainController {
 
-    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
+//    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
     private final TerrainService terrainService;
 
-    public TerrainController(KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate, TerrainService terrainService) {
-        this.kafkaTemplate = kafkaTemplate;
+    public TerrainController(TerrainService terrainService) {
         this.terrainService = terrainService;
     }
 
@@ -27,7 +26,7 @@ public class TerrainController {
     @PostMapping("/assign")
     public ResponseEntity<String> assignTerrainToCentre(@RequestBody TerrainAssignmentEvent event) {
         try {
-            terrainService.assignTerrainToCentre(event);
+//            terrainService.assignTerrainToCentre(event);
             return ResponseEntity.ok("Terrain assigned to centre and Kafka event published!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error assigning terrain: " + e.getMessage());

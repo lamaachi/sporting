@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class TerrainAssignmentEvent {
-    private Long terrainId;
+    private int terrainId;
     private int centreId;
     private String assignmentStatus; // Example: ASSIGNED, FAILED
 }

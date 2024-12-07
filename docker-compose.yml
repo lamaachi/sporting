@@ -1,44 +1,123 @@
-version: "1.0"
+version: "3.0"
 services:
-  # Config Server Service
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+  admin-server:
+    build:
+      context: ./admin-server
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
 #  config-server:
 #    build:
 #      context: ./config-server
+#    container_name: config-server
 #    ports:
-#      - "8888:8888"
+#      - "9000:9000"
 #    environment:
 #      SPRING_PROFILES_ACTIVE: native
-#      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/app/config-repo
+#      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: https://github.com/lamaachi/sporting-config-repo
 #    volumes:
 #      - ./config-repo:/app/config-repo
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://config-server:9000/actuator/health" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
+#    networks:
+#      - app-network
 
-  # Center Service
+  terrain-service:
+    build:
+      context: ./terain-service
+    container_name: terrain-service
+    depends_on:
+      config-server:
+        condition: service_healthy
+      terain-service-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5434/centredb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:9000
+    ports:
+      - "8084:8084"
+    networks:
+      - app-network
+
+
   centre-service:
     build:
       context: ./centre-service
-    ports:
-      - "8082:8082"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: lamaachi
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    container_name: centre-service
     depends_on:
 #      - config-server
+      - rabbitmq
       - center-service-db
-  # PostgreSQL Database
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5433/centredb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:9000
+      SPRING_CLOUD_CONFIG_FAIL_FAST: "true"
+      SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS: "6"
+    networks:
+      - app-network
   center-service-db:
     image: postgres:13
     environment:
       POSTGRES_DB: centredb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lamaachi
+      SPRING_RABBITMQ_HOST: rabbitmq
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_center_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  terain-service-db:
+    image: postgres:13
+    container_name: terain-service-db
+    environment:
+      POSTGRES_DB: teraindb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lamaachi
+      SPRING_RABBITMQ_HOST: rabbitmq
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_terain_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://terain-service-db:9000/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
-  postgres_data:
+  postgres_center_data:
+  postgres_terain_data:
