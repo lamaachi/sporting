@@ -2,6 +2,7 @@ package org.projet.centreservice.dtos;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CentreSportifDTO {
+public class CentreSportifDTO implements Serializable {
     private int id;
     private String nom;
     private String adresse;

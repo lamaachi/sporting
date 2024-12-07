@@ -61,7 +61,7 @@ public class CentreService {
         // Set terrains and equipements here if needed
 
         // Publish event
-        eventProducer.sendCentreEvent("Centre created: " + centreSportif);
+        eventProducer.sendCentreCreatedEvent(centreSportifDTO);
 
         return centreSportifRepository.save(centreSportif);
     }

@@ -1,11 +1,12 @@
 package org.projet.terainservice.dtos;
 
 
+import java.io.Serializable;
 
 /**
  * @author lamaachi
  **/
-public class TerrainDTO {
+public class TerrainDTO implements Serializable {
     private int id;
     private String nom;
     private String type;
