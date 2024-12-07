@@ -37,6 +37,11 @@
     </dependencies>
     <modules>
         <module>auth-service</module>
+        <module>centre-service</module>
+        <module>terain-service</module>
+        <module>config-server</module>
+        <module>admin-server</module>
+        <module>regitry-service</module>
     </modules>
     <dependencyManagement>
 
