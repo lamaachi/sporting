@@ -21,7 +21,10 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding binding(Queue centreQueue, TopicExchange centreExchange) {
-        return BindingBuilder.bind(centreQueue).to(centreExchange).with("centre.routing.key");
+        return BindingBuilder
+                .bind(centreQueue)
+                .to(centreExchange)
+                .with("centre.created");
     }
 }
 
