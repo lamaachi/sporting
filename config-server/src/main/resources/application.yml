@@ -1,0 +1,40 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS:https://github.com/lamaachi/sporting-config-repo}
+        default-label: main
+        enabled: true
+    discovery:
+      enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true  # Set this to true or false as needed
+  client:
+    service-url:
+      defaultZone: ${DISCOVER-SERVER-URL:http://localhost:8761/eureka/}  # Use this for Eureka URL
+
+
+
+
+# Logging configuration
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.config.server: DEBUG  # DEBUG level can be useful for troubleshooting
+
+# Optional: Management and Health settings
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
