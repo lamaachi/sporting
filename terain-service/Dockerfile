@@ -10,7 +10,6 @@
 ## Download the dependencies (this step will be cached unless pom.xml changes)
 #RUN mvn dependency:go-offline
 #
-#
 #COPY src ./src
 #
 ## Build the application
@@ -23,11 +22,11 @@ FROM openjdk:17-slim
 WORKDIR /app
 
 # Copy the built jar file from the build stage
-#COPY --from=build /app/target/centre-service-0.0.1-SNAPSHOT.jar centre-service.jar
-COPY /target/centre-service-0.0.1-SNAPSHOT.jar centre-service.jar
+#COPY --from=build /app/target/terain-service-0.0.1-SNAPSHOT.jar terain-service.jar
+COPY /target/terain-service-0.0.1-SNAPSHOT.jar terain-service.jar
 
 # Expose the application's port
-EXPOSE 8082
+EXPOSE 8084
 
 # Command to run the application
-ENTRYPOINT ["java", "-jar", "centre-service.jar"]
+ENTRYPOINT ["java", "-jar", "terain-service.jar"]
