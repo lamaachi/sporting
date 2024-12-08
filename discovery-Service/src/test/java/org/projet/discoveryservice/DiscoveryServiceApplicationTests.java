@@ -1,12 +1,13 @@
-package org.projet.bookmycourt;
+package org.projet.discoveryservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class BookmycourtApplicationTests {
+class DiscoveryServiceApplicationTests {
 
     @Test
     void contextLoads() {
     }
+
 }

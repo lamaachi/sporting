@@ -1,0 +1,125 @@
+version: "3.0"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+  admin-server:
+    build:
+      context: ./admin-server
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+#  config-server:
+#    build:
+#      context: ./config-server
+#    container_name: config-server
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: native
+#      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: https://github.com/lamaachi/sporting-config-repo
+#    volumes:
+#      - ./config-repo:/app/config-repo
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://config-server:9000/actuator/health" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
+#    networks:
+#      - app-network
+
+  terrain-service:
+    build:
+      context: ./terain-service
+    container_name: terrain-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5432/teraindb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    ports:
+      - "8084:8084"
+    networks:
+      - app-network
+  aauth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8880:8880"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_WEB_CORS_ALLOWED-ORIGINS: http://localhost:3000
+      SPRING_WEB_CORS_ALLOWED-METHODS: "*"
+      SPRING_WEB_CORS_ALLOWED-HEADERS: "*"
+      SPRING_WEB_CORS_ALLOW-CREDENTIALS: "true"
+      AWS_COGNITO_USERPOOLID: us-east-1_EFk0O4Bg5
+      AWS_COGNITO_CLIENTID: 5a6cmfelb5uep60k3f6irfvjid
+      AWS_COGNITO_CLIENTSECRET: 1mkuud3cnjj0q2nnoe7lai11davuf3c4edjgpirmj1r3rl5ubumu
+      AWS_COGNITO_REGION: us-east-1
+      COGNITO_ENDPOINT: https://cognito-idp.us-east-1.amazonaws.com/
+    networks:
+      - app-network
+
+  centre-service:
+    build:
+      context: ./centre-service
+    container_name: centre-service
+    depends_on:
+#      - config-server
+      - rabbitmq
+      - center-service-db
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    networks:
+      - app-network
+  center-service-db:
+    image: postgres:13
+    container_name: center-service-db
+    environment:
+      POSTGRES_DB: centredb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lamaachi
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_center_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  terain-service-db:
+    image: postgres:13
+    container_name: terain-service-db
+    environment:
+      POSTGRES_DB: teraindb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lamaachi
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_terain_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_center_data:
+  postgres_terain_data:
