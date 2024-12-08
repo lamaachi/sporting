@@ -10,8 +10,8 @@ spring:
       enabled: true
     config:
       enabled: true
-  config:
-    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
+#  config:
+#    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
   rabbitmq:
     host: localhost      # RabbitMQ host
     port: 5672           # RabbitMQ port

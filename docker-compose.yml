@@ -40,23 +40,35 @@ services:
     build:
       context: ./terain-service
     container_name: terrain-service
-    depends_on:
-      config-server:
-        condition: service_healthy
-      terain-service-db:
-        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5434/centredb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5432/teraindb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lamaachi
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
-      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:9000
     ports:
       - "8084:8084"
     networks:
       - app-network
-
+  aauth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8880:8880"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_WEB_CORS_ALLOWED-ORIGINS: http://localhost:3000
+      SPRING_WEB_CORS_ALLOWED-METHODS: "*"
+      SPRING_WEB_CORS_ALLOWED-HEADERS: "*"
+      SPRING_WEB_CORS_ALLOW-CREDENTIALS: "true"
+      AWS_COGNITO_USERPOOLID: us-east-1_EFk0O4Bg5
+      AWS_COGNITO_CLIENTID: 5a6cmfelb5uep60k3f6irfvjid
+      AWS_COGNITO_CLIENTSECRET: 1mkuud3cnjj0q2nnoe7lai11davuf3c4edjgpirmj1r3rl5ubumu
+      AWS_COGNITO_REGION: us-east-1
+      COGNITO_ENDPOINT: https://cognito-idp.us-east-1.amazonaws.com/
+    networks:
+      - app-network
 
   centre-service:
     build:
@@ -70,23 +82,19 @@ services:
       - "8085:8085"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5433/centredb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lamaachi
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
-      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:9000
-      SPRING_CLOUD_CONFIG_FAIL_FAST: "true"
-      SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS: "6"
     networks:
       - app-network
   center-service-db:
     image: postgres:13
+    container_name: center-service-db
     environment:
       POSTGRES_DB: centredb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lamaachi
-      SPRING_RABBITMQ_HOST: rabbitmq
     ports:
       - "5433:5432"
     volumes:
@@ -101,16 +109,10 @@ services:
       POSTGRES_DB: teraindb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lamaachi
-      SPRING_RABBITMQ_HOST: rabbitmq
     ports:
       - "5434:5432"
     volumes:
       - postgres_terain_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://terain-service-db:9000/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
     networks:
       - app-network
 
