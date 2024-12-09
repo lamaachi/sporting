@@ -1,6 +1,6 @@
 package org.projet.terainservice.services;
 
-import org.projet.terainservice.dtos.TerrainAssignmentEvent;
+import org.projet.terainservice.RabbitMQ.TerrainEventProducer;
 import org.projet.terainservice.dtos.TerrainDTO;
 import org.projet.terainservice.entities.Terrain;
 import org.projet.terainservice.repositories.TerrainRepository;
@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class TerrainService {
-
+    private final TerrainEventProducer eventSender;
     private final TerrainRepository terrainRepository;
-//    private final KafkaTemplate<String, TerrainAssignmentEvent> kafkaTemplate;
 
     @Autowired
-    public TerrainService(TerrainRepository terrainRepository) {
+    public TerrainService(TerrainEventProducer eventSender, TerrainRepository terrainRepository) {
+        this.eventSender = eventSender;
         this.terrainRepository = terrainRepository;
     }
 
@@ -35,6 +35,8 @@ public class TerrainService {
     public TerrainDTO saveTerrain(TerrainDTO terrainDTO) {
         Terrain terrain = convertToEntity(terrainDTO);
         Terrain savedTerrain = terrainRepository.save(terrain);
+        eventSender.sendEvent("ADD_TERRAIN", getAllTerrains());
+        eventSender.sendEvent("ALL_EVENTS",getAllTerrains());
         return convertToDTO(savedTerrain);
     }
 
@@ -49,6 +51,8 @@ public class TerrainService {
             terrain.setDisponible(terrainDTO.isDisponible());
             terrain.setCentreId(terrainDTO.getCentreId());
             Terrain updatedTerrain = terrainRepository.save(terrain);
+            eventSender.sendEvent("UPDATE_TERRAIN_EVENT", updatedTerrain);
+            eventSender.sendEvent("ALL_TERRAINS_EVENT",getAllTerrains());
             return convertToDTO(updatedTerrain);
         } else {
             throw new RuntimeException("Terrain not found with id: " + id);
@@ -65,20 +69,10 @@ public class TerrainService {
         }
     }
 
-    // Assign a terrain to a centre and send a Kafka event
-//    public void assignTerrainToCentre(TerrainAssignmentEvent event) {
-//        Optional<Terrain> optionalTerrain = terrainRepository.findById(event.getTerrainId());
-//        if (optionalTerrain.isPresent()) {
-//            Terrain terrain = optionalTerrain.get();
-//            terrain.setCentreId(event.getCentreId());
-//            terrainRepository.save(terrain);
-//
-//            // Send the assignment event to Kafka
-//            kafkaTemplate.send("terrain-assignment-topic", event);
-//        } else {
-//            throw new RuntimeException("Terrain not found with id: " + event.getTerrainId());
-//        }
-//    }
+    public void runTerrainService() {
+        // Run terrain service logic
+        eventSender.sendEvent("RUN_TERRAIN", "Service started successfully");
+    }
 
     // Convert Terrain entity to DTO
     private TerrainDTO convertToDTO(Terrain terrain) {

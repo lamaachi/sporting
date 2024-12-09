@@ -17,7 +17,7 @@ public class Terrain {
     private String nom;
     private String type;
     private float prix;
-    private boolean disponible; // yes or no for reservation
+    private boolean disponible; // yes or no for reservatio
     private int centreId;
 
     public Terrain() {}
