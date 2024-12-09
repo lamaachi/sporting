@@ -3,19 +3,41 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - app-network
+  # Eureka server
+  discovery-service:
+    build:
+      context: ./discovery-Service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"  # Expose Eureka port for registration and discovery
+    environment:
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka
     networks:
       - app-network
 
   admin-server:
     build:
       context: ./admin-server
+    container_name: admin-server
     ports:
       - "8080:8080"
+    environment:
+      ADMIN_SERVER_URL: "http://admin-server:8080"
     networks:
       - app-network
+    healthcheck:
+      test: curl -f http://localhost:8080/actuator/health || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
 
 #  config-server:
 #    build:
@@ -46,29 +68,36 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lamaachi
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
+
     ports:
       - "8084:8084"
     networks:
       - app-network
-  aauth-service:
-    build:
-      context: ./auth-service
-    container_name: auth-service
-    ports:
-      - "8880:8880"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_WEB_CORS_ALLOWED-ORIGINS: http://localhost:3000
-      SPRING_WEB_CORS_ALLOWED-METHODS: "*"
-      SPRING_WEB_CORS_ALLOWED-HEADERS: "*"
-      SPRING_WEB_CORS_ALLOW-CREDENTIALS: "true"
-      AWS_COGNITO_USERPOOLID: us-east-1_EFk0O4Bg5
-      AWS_COGNITO_CLIENTID: 5a6cmfelb5uep60k3f6irfvjid
-      AWS_COGNITO_CLIENTSECRET: 1mkuud3cnjj0q2nnoe7lai11davuf3c4edjgpirmj1r3rl5ubumu
-      AWS_COGNITO_REGION: us-east-1
-      COGNITO_ENDPOINT: https://cognito-idp.us-east-1.amazonaws.com/
-    networks:
-      - app-network
+#  auth-service:
+#    build:
+#      context: ./auth-service
+#    container_name: auth-service
+#    ports:
+#      - "8880:8880"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_WEB_CORS_ALLOWED-ORIGINS: http://localhost:3000
+#      SPRING_WEB_CORS_ALLOWED-METHODS: "*"
+#      SPRING_WEB_CORS_ALLOWED-HEADERS: "*"
+#      SPRING_WEB_CORS_ALLOW-CREDENTIALS: "true"
+#      AWS_COGNITO_USERPOOLID: us-east-1_EFk0O4Bg5
+#      AWS_COGNITO_CLIENTID: 5a6cmfelb5uep60k3f6irfvjid
+#      AWS_COGNITO_CLIENTSECRET: 1mkuud3cnjj0q2nnoe7lai11davuf3c4edjgpirmj1r3rl5ubumu
+#      AWS_COGNITO_REGION: us-east-1
+#      COGNITO_ENDPOINT: https://cognito-idp.us-east-1.amazonaws.com/
+#    networks:
+#      - app-network
 
   centre-service:
     build:
@@ -86,6 +115,12 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lamaachi
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
   center-service-db:
@@ -115,7 +150,18 @@ services:
       - postgres_terain_data:/var/lib/postgresql/data
     networks:
       - app-network
-
+#  gateway:
+#    build:
+#      context: ./apigatway
+#    container_name: api-gateway
+#    ports:
+#      - "8082:8082"  # API Gateway Port
+#    environment:
+#      - GATEWAY_SERVER_URL=http://localhost:8082
+#      - CENTRE_SERVICE_URL=http://centre-service:8085  # Point to centre-service
+#      - ADMIN_SERVER_URL=http://admin-server:8080  # Point to admin-server
+#    networks:
+#      - app-network
 networks:
   app-network:
     driver: bridge
