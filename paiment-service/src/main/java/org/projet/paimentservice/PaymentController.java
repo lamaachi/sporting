@@ -1,4 +1,4 @@
-package org.projet.paimentservice.client;
+package org.projet.paimentservice;
 
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
@@ -39,7 +39,7 @@ public class PaymentController {
 
             // Créer le PaymentIntent
             Map<String, Object> params = new HashMap<>();
-            params.put("amount", 9000); // Montant en centimes
+            params.put("amount", 3000); // Montant en centimes
             params.put("currency", "eur");
             params.put("payment_method", paymentMethodId);
             params.put("confirmation_method", "manual");
@@ -61,12 +61,11 @@ public class PaymentController {
 
     @PostMapping("/confirmReservation")
     public ResponseEntity<?> confirmReservation(@RequestBody Map<String, String> payload) {
-        String paymentIntentId = payload.get("paymentIntentId");  // Utilisez paymentIntentId
-        String reservationId = payload.get("reservationId");
+        String paymentIntentId = payload.get("paymentIntentId");  // Utilisez paymentIntentI
 
         // Vérification des paramètres nécessaires
-        if (paymentIntentId == null || reservationId == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Missing paymentIntentId or reservationId."));
+        if (paymentIntentId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Missing paymentIntentId."));
         }
 
         try {
@@ -78,9 +77,6 @@ public class PaymentController {
 
             // Vérifier si le paiement a réussi
             if ("succeeded".equals(paymentIntent.getStatus())) {
-                // Le paiement a réussi, nous pouvons confirmer la réservation
-//                reservationService.confirmReservation(reservationId); // Appel du service pour confirmer la réservation
-
                 return ResponseEntity.ok(Map.of("message", "Reservation confirmed and paid successfully."));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)

@@ -4,14 +4,14 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8080/applications
-  cloud:
-    discovery:
-      enabled: true
-    config:
-      enabled: true
-  config:
-    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
+        url: ${ADMIN_SERVER_URL:http://localhost:8080}
+#  cloud:
+#    discovery:
+#      enabled: true
+#    config:
+#      enabled: true
+#  config:
+#    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
   rabbitmq:
     host: localhost      # RabbitMQ host
     port: 5672           # RabbitMQ port

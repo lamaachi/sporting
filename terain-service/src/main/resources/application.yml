@@ -4,19 +4,19 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8080/applications
-  cloud:
-    discovery:
-      enabled: true
-    config:
-      enabled: true
-  config:
-    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
+        url: ${ADMIN_SERVER_URL:http://localhost:8080}
+#  cloud:
+#    discovery:
+#      enabled: true
+#    config:
+#      enabled: true
+#  config:
+#    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
   rabbitmq:
-    host: localhost      # RabbitMQ host
-    port: 5672           # RabbitMQ port
-    username: guest      # RabbitMQ default username
-    password: guest      # RabbitMQ default password
+    host: ${SPRING_RABBITMQ_HOST:localhost}      # RabbitMQ host
+    port: ${SPRING_RABBITMQ_PORT:5672}           # RabbitMQ port
+    username: ${RABBITMQ_DEFAULT_USER:guest}      # RabbitMQ default username
+    password: ${RABBITMQ_DEFAULT_PASS:guest}      # RabbitMQ default password
     virtual-host: /      # RabbitMQ virtual host (default is '/')
     listener:
       simple:
@@ -44,3 +44,6 @@ spring:
     prefer-ip-address: true
 server:
   port: 8084
+
+terrain:
+  exchange: event_terrain_exchange

@@ -1,11 +1,15 @@
 server:
-  port: 8761
+  port: 8761  # Eureka server will be accessible on this port
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: false  # This service doesn't register with Eureka
+    fetch-registry: false  # This service doesn't fetch the registry
+
+  server:
+    enable-self-preservation: false  # Disable self-preservation to prevent Eureka from refusing to register services
+    eviction-interval-timer-in-ms: 5000  # Time interval to check expired instances
 
 spring:
   application:
-    name: discovery-service
+    name: discovery-service  # The name of the Eureka server

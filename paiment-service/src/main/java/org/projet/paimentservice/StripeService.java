@@ -1,4 +1,4 @@
-package org.projet.paimentservice.client;
+package org.projet.paimentservice;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
