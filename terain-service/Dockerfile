@@ -27,6 +27,5 @@ COPY --from=build /app/target/terain-service-0.0.1-SNAPSHOT.jar terain-service.j
 
 # Expose the application's port
 EXPOSE 8084
-
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "terain-service.jar"]

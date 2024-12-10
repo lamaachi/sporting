@@ -83,7 +83,7 @@ public class CentreController {
             event.setAssignmentStatus("ASSIGNED"); // Initially set the status as ASSIGNED
 
             // Call the service to assign the terrain
-            centreSportifService.assignTerrainToCentre(event);
+//            centreSportifService.assignTerrainToCentre(event);
 
             // Publish the event to Kafka
 //            kafkaTemplate.send("terrain-assignment-topic", event);

@@ -21,35 +21,22 @@ import java.util.Optional;
 @Service
 public class CentreService {
 
-    private final CentreEventProducer eventProducer;
-    private CentreSportifRepository centreSportifRepository;
-
+    private final CentreEventProducer centreEventProducer;
+    private final CentreSportifRepository centreSportifRepository;
     public CentreService(CentreEventProducer eventProducer, CentreSportifRepository centreSportifRepository) {
-        this.eventProducer = eventProducer;
+        this.centreEventProducer = eventProducer;
         this.centreSportifRepository = centreSportifRepository;
     }
 
+    public void runCentreService() {
+        // Send the list of centres in the event
+        centreEventProducer.sendEvent("RUN_CENTRE", "Service started successfully");
+        centreEventProducer.sendEvent("CENTRE_LIST", getAllCentreSportifs());
+    }
 
     // This method assigns a terrain to a centre
-    public void assignTerrainToCentre(TerrainAssignmentEvent event) {
-        // 1. Find the centre by its ID
-        CentreSportif centre = centreSportifRepository.findById(event.getCentreId())
-                .orElseThrow(() -> new RuntimeException("Centre not found"));
-
-        // 3. Update the centre's terrain details
-        // You can either add this terrain to the centre’s list of terrains or assign a reference (if one-to-many relationship)
-        if (centre.getAssignedTerrains() == null) {
-            // Initialize the list if it's null
-            centre.setAssignedTerrains(new ArrayList<>());
-        }
-        // Example of adding terrain ID to centre (assuming you have a list of terrain IDs in the CentreSportif model)
-        centre.getAssignedTerrains().add(event.getCentreId());
-
-        // 4. Save the updated centre back to the database
-        centreSportifRepository.save(centre);
-
-        // Log or output the assignment
-        System.out.println("Terrain " + event.getTerrainId() + " assigned to Centre " + event.getCentreId());
+    public void assignTerrainToCentre() {
+        centreEventProducer.sendEvent("ASSIGNED_TERRAIN_EVENT_DONE","Terrain assigned successfully");
     }
 
     // Create CentreSportif
@@ -58,12 +45,13 @@ public class CentreService {
         centreSportif.setNom(centreSportifDTO.getNom());
         centreSportif.setAdresse(centreSportifDTO.getAdresse());
         centreSportif.setHoraires(centreSportifDTO.getHoraires());
+
+        CentreSportif centreSportif1 = centreSportifRepository.save(centreSportif);
         // Set terrains and equipements here if needed
+        centreEventProducer.sendEvent("NEW_TERRAIN_EVENT", centreSportif);
+        centreEventProducer.sendEvent("ALL_TERRAINS_EVENT",getAllCentreSportifs());
 
-        // Publish event
-        eventProducer.sendCentreCreatedEvent(centreSportifDTO);
-
-        return centreSportifRepository.save(centreSportif);
+        return centreSportif1;
     }
 
     // Get all CentreSportifs
@@ -85,8 +73,12 @@ public class CentreService {
             centreSportif.setNom(centreSportifDTO.getNom());
             centreSportif.setAdresse(centreSportifDTO.getAdresse());
             centreSportif.setHoraires(centreSportifDTO.getHoraires());
+
+            CentreSportif updatedCentre = centreSportifRepository.save(centreSportif);
+            centreEventProducer.sendEvent("UPDATE_TERRAIN_EVENT", centreSportifDTO);
+            centreEventProducer.sendEvent("ALL_TERRAINS_EVENT",getAllCentreSportifs());
             // Update terrains and equipements if needed
-            return centreSportifRepository.save(centreSportif);
+            return updatedCentre;
         }
         return null;
     }

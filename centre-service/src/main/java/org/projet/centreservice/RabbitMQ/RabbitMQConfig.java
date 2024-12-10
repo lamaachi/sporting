@@ -1,30 +1,35 @@
 package org.projet.centreservice.RabbitMQ;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
+
+
+
     @Bean
-    public TopicExchange centreExchange() {
-        return new TopicExchange("centre.exchange");
+    public Jackson2JsonMessageConverter jsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 
     @Bean
-    public Queue centreQueue() {
-        return new Queue("centre.queue", true);
+    public DirectExchange centreExchange() {
+        return new DirectExchange("event_centre_exchange", true, false);
     }
 
     @Bean
-    public Binding binding(Queue centreQueue, TopicExchange centreExchange) {
-        return BindingBuilder
-                .bind(centreQueue)
-                .to(centreExchange)
-                .with("centre.created");
+    public Queue terrainQueue() {
+        return new Queue("centre.Queue", true);
+    }
+
+    @Bean
+    public Binding binding(DirectExchange terrainExchange, Queue terrainQueue) {
+        return BindingBuilder.bind(terrainQueue)
+                .to(terrainExchange)
+                .with("centre_routing_key");
     }
 }
 
