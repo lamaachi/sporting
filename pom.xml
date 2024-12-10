@@ -37,7 +37,6 @@
     </dependencies>
     <modules>
         <module>apigatway</module>
-        <module>auth-service</module>
         <module>centre-service</module>
         <module>terain-service</module>
         <module>config-server</module>

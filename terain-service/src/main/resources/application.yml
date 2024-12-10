@@ -1,31 +1,30 @@
 spring:
   application:
     name: terain-service
+  web:
+    cors:
+      allowed-origins: ${SPRING_WEB_CORS_ALLOWED-ORIGINS:http://localhost:3000}
+      allowed-methods: ${SPRING_WEB_CORS_ALLOWED-METHODS:*}
+      allowed-headers: ${SPRING_WEB_CORS_ALLOWED-HEADERS:*}
+      allow-credentials: ${SPRING_WEB_CORS_ALLOW-CREDENTIALS:true}
   boot:
     admin:
       client:
         url: ${ADMIN_SERVER_URL:http://localhost:8080}
-#  cloud:
-#    discovery:
-#      enabled: true
-#    config:
-#      enabled: true
-#  config:
-#    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
   rabbitmq:
-    host: ${SPRING_RABBITMQ_HOST:localhost}      # RabbitMQ host
-    port: ${SPRING_RABBITMQ_PORT:5672}           # RabbitMQ port
-    username: ${RABBITMQ_DEFAULT_USER:guest}      # RabbitMQ default username
-    password: ${RABBITMQ_DEFAULT_PASS:guest}      # RabbitMQ default password
-    virtual-host: /      # RabbitMQ virtual host (default is '/')
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_DEFAULT_USER:guest}
+    password: ${RABBITMQ_DEFAULT_PASS:guest}
+    virtual-host: /
     listener:
       simple:
         retry:
-          enabled: true  # Enable retry mechanism for message consumption
+          enabled: true
           initial-interval: 1000
           max-attempts: 3
           multiplier: 2.0
-      acknowledge-mode: auto  # Acknowledge messages automatically
+      acknowledge-mode: auto
   eureka:
     client:
       service-url:
@@ -38,12 +37,13 @@ spring:
     jpa:
       database-platform: org.hibernate.dialect.PostgreSQLDialect
       hibernate:
-        ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update} # You can use 'validate', 'update', 'create', or 'create-drop'
+        ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
       show-sql: true
   instance:
     prefer-ip-address: true
 server:
   port: 8084
 
+Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
 terrain:
   exchange: event_terrain_exchange

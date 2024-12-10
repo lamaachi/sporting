@@ -1,25 +1,24 @@
 package org.projet.centreservice.RabbitMQ;
 
+import org.projet.centreservice.dtos.CentreEvent;
 import org.projet.centreservice.dtos.CentreSportifDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CentreEventProducer {
     private final RabbitTemplate rabbitTemplate;
+    private final String exchange;
 
-        @Autowired
-        public CentreEventProducer(RabbitTemplate rabbitTemplate) {
-            this.rabbitTemplate = rabbitTemplate;
-        }
-
-    //    public void sendCentreEvent(String centreEvent) {
-    //        rabbitTemplate.convertAndSend("centre.exchange", "centre.routing.key", centreEvent);
-    //    }
-
-        public void sendCentreCreatedEvent(CentreSportifDTO centreSportifDTO) {
-            rabbitTemplate.convertAndSend("centre.exchange", "centre.routing.key", centreSportifDTO);
-            System.out.println("Event sent: "+centreSportifDTO);
-        }
+    public CentreEventProducer(RabbitTemplate rabbitTemplate,
+                                @Value("${centre.exchange}") String exchange) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.exchange = exchange;
     }
+
+    public void sendEvent(String eventType, Object data) {
+        rabbitTemplate.convertAndSend(exchange, "centre_routing_key", new CentreEvent(eventType, data));
+    }
+}

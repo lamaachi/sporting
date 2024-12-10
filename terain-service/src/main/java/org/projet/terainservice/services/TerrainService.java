@@ -1,6 +1,8 @@
 package org.projet.terainservice.services;
 
+import jakarta.annotation.PostConstruct;
 import org.projet.terainservice.RabbitMQ.TerrainEventProducer;
+import org.projet.terainservice.dtos.TerrainAssignmentEvent;
 import org.projet.terainservice.dtos.TerrainDTO;
 import org.projet.terainservice.entities.Terrain;
 import org.projet.terainservice.repositories.TerrainRepository;
@@ -37,6 +39,7 @@ public class TerrainService {
         Terrain savedTerrain = terrainRepository.save(terrain);
         eventSender.sendEvent("ADD_TERRAIN", getAllTerrains());
         eventSender.sendEvent("ALL_EVENTS",getAllTerrains());
+        eventSender.sendEvent("ASSIGN_CENTRE_EVENT",new TerrainAssignmentEvent(terrainDTO.getId(),terrainDTO.getCentreId()));
         return convertToDTO(savedTerrain);
     }
 
@@ -51,8 +54,10 @@ public class TerrainService {
             terrain.setDisponible(terrainDTO.isDisponible());
             terrain.setCentreId(terrainDTO.getCentreId());
             Terrain updatedTerrain = terrainRepository.save(terrain);
-            eventSender.sendEvent("UPDATE_TERRAIN_EVENT", updatedTerrain);
+            eventSender.sendEvent("UPDATE_TERRAIN_EVENT", terrainDTO);
             eventSender.sendEvent("ALL_TERRAINS_EVENT",getAllTerrains());
+            eventSender.sendEvent("ASSIGN_CENTRE_EVENT",new TerrainAssignmentEvent(terrainDTO.getId(),terrainDTO.getCentreId()));
+
             return convertToDTO(updatedTerrain);
         } else {
             throw new RuntimeException("Terrain not found with id: " + id);
@@ -72,6 +77,7 @@ public class TerrainService {
     public void runTerrainService() {
         // Run terrain service logic
         eventSender.sendEvent("RUN_TERRAIN", "Service started successfully");
+        eventSender.sendEvent("ALL_TERRAINS", getAllTerrains());
     }
 
     // Convert Terrain entity to DTO

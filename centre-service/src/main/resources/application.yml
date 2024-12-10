@@ -1,31 +1,30 @@
 spring:
   application:
     name: centre-service
-  boot:
-    admin:
-      client:
-        url: ${ADMIN_SERVER_URL:http://localhost:8080}
-#  cloud:
-#    discovery:
-#      enabled: true
-#    config:
-#      enabled: true
-#  config:
-#    import: ${SPRING_CONFIG_IMPORT:optional:configserver:http://localhost:9000}
+  web:
+    cors:
+      allowed-origins: ${SPRING_WEB_CORS_ALLOWED-ORIGINS:http://localhost:3000}
+      allowed-methods: ${SPRING_WEB_CORS_ALLOWED-METHODS:*}
+      allowed-headers: ${SPRING_WEB_CORS_ALLOWED-HEADERS:*}
+      allow-credentials: ${SPRING_WEB_CORS_ALLOW-CREDENTIALS:true}
   rabbitmq:
-    host: localhost      # RabbitMQ host
-    port: 5672           # RabbitMQ port
-    username: guest      # RabbitMQ default username
-    password: guest      # RabbitMQ default password
-    virtual-host: /      # RabbitMQ virtual host (default is '/')
+    host: localhost       # RabbitMQ host
+    port: 5672            # RabbitMQ port
+    username: guest       # RabbitMQ default username
+    password: guest       # RabbitMQ default password
+    virtual-host: /       # RabbitMQ virtual host (default is '/')
     listener:
       simple:
         retry:
-          enabled: true  # Enable retry mechanism for message consumption
+          enabled: true   # Enable retry mechanism for message consumption
           initial-interval: 1000
           max-attempts: 3
           multiplier: 2.0
       acknowledge-mode: auto  # Acknowledge messages automatically
+  boot:
+    admin:
+      client:
+        url: ${ADMIN_SERVER_URL:http://localhost:8080}
   eureka:
     client:
       service-url:
@@ -38,10 +37,16 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create} # You can use 'validate', 'update', 'create', or 'create-drop'
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create} # Options: 'validate', 'update', 'create', 'create-drop'
     show-sql: true
   instance:
     prefer-ip-address: true
 
 server:
   port: 8085
+
+# Additional Headers for CORS
+Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
+
+centre:
+  exchange: event_centre_exchange
