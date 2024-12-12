@@ -1,22 +1,31 @@
 package org.projet.terainservice.RabbitMQ;
 
-import org.projet.terainservice.dtos.TerrainEvent;
+import org.projet.terainservice.dtos.TerrainAssignmentEvent;
+import org.projet.terainservice.dtos.TerrainDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TerrainEventProducer {
     private final RabbitTemplate rabbitTemplate;
-    private final String exchange;
 
-    public TerrainEventProducer(RabbitTemplate rabbitTemplate,
-                                @Value("${terrain.exchange}") String exchange) {
+    public TerrainEventProducer(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
-        this.exchange = exchange;
     }
 
-    public void sendEvent(String eventType, Object data) {
-        rabbitTemplate.convertAndSend(exchange, "terrain_routing_key", new TerrainEvent(eventType, data));
+
+    public void publishEventAssignment(String routingKey, TerrainAssignmentEvent event) {
+        rabbitTemplate.convertAndSend("terrain.events", routingKey, event);
     }
+
+    public void publishEventList(String routingKey, List<TerrainDTO> event) {
+        rabbitTemplate.convertAndSend("terrain.events", routingKey, event);
+    }
+
+    public void publishEventOneTerrain(String routingKey, TerrainDTO event) {
+        rabbitTemplate.convertAndSend("terrain.events", routingKey, event);
+    }
+
 }

@@ -3,6 +3,7 @@ package org.projet.centreservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,5 @@ public class CentreSportif {
     private String adresse;
     private String horaires;
 
-    @ElementCollection
-    private List<Integer> assignedTerrains;  // List of terrain IDs assigned to this centre
+    private List<Integer> assignedTerrains = new ArrayList<Integer>();
 }

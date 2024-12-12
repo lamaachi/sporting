@@ -48,8 +48,8 @@ public class CentreService {
 
         CentreSportif centreSportif1 = centreSportifRepository.save(centreSportif);
         // Set terrains and equipements here if needed
-        centreEventProducer.sendEvent("NEW_TERRAIN_EVENT", centreSportif);
-        centreEventProducer.sendEvent("ALL_TERRAINS_EVENT",getAllCentreSportifs());
+//        centreEventProducer.sendEvent("NEW_TERRAIN_EVENT", centreSportif);
+//        centreEventProducer.sendEvent("ALL_TERRAINS_EVENT",getAllCentreSportifs());
 
         return centreSportif1;
     }

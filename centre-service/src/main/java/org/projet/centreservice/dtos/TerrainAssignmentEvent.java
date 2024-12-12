@@ -13,5 +13,4 @@ import lombok.NoArgsConstructor;
 public class TerrainAssignmentEvent {
     private int terrainId;
     private int centreId;
-    private String assignmentStatus; // Example: ASSIGNED, FAILED
 }
