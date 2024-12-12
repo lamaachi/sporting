@@ -18,7 +18,7 @@ public class RabbitMQConfig {
 
     @Bean
     public TopicExchange terrainEventsExchange() {
-        return new TopicExchange("terrain.events");
+        return new TopicExchange("terrain.events",true,false);
     }
 
 
