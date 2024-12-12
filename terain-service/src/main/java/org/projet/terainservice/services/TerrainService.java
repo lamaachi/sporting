@@ -43,6 +43,7 @@ public class TerrainService {
         // Send events for terrain addition
         eventSender.publishEventOneTerrain("terrain.add", convertToDTO(savedTerrain));
         eventSender.publishEventList("terrain.all", getAllTerrains());
+        eventSender.publishEventAssignment("terrain.assign", new TerrainAssignmentEvent(terrain.getId(),terrain.getCentreId()));
         return convertToDTO(savedTerrain);
     }
 
