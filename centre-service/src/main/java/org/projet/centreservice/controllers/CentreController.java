@@ -80,7 +80,6 @@ public class CentreController {
             TerrainAssignmentEvent event = new TerrainAssignmentEvent();
             event.setCentreId(centreId);
             event.setTerrainId(terrainId);
-            event.setAssignmentStatus("ASSIGNED"); // Initially set the status as ASSIGNED
 
             // Call the service to assign the terrain
 //            centreSportifService.assignTerrainToCentre(event);
