@@ -2,10 +2,8 @@ package org.projet.centreservice.services;
 
 import org.projet.centreservice.RabbitMQ.CentreEventProducer;
 import org.projet.centreservice.dtos.CentreSportifDTO;
-import org.projet.centreservice.dtos.TerrainAssignmentEvent;
 import org.projet.centreservice.entities.CentreSportif;
 import org.projet.centreservice.repositories.CentreSportifRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,13 +28,13 @@ public class CentreService {
 
     public void runCentreService() {
         // Send the list of centres in the event
-        centreEventProducer.sendEvent("RUN_CENTRE", "Service started successfully");
-        centreEventProducer.sendEvent("CENTRE_LIST", getAllCentreSportifs());
+//        centreEventProducer.sendEvent("RUN_CENTRE", "Service started successfully");
+//        centreEventProducer.sendEvent("CENTRE_LIST", getAllCentreSportifs());
     }
 
     // This method assigns a terrain to a centre
     public void assignTerrainToCentre() {
-        centreEventProducer.sendEvent("ASSIGNED_TERRAIN_EVENT_DONE","Terrain assigned successfully");
+//        centreEventProducer.sendEvent("ASSIGNED_TERRAIN_EVENT_DONE","Terrain assigned successfully");
     }
 
     // Create CentreSportif
@@ -75,8 +73,8 @@ public class CentreService {
             centreSportif.setHoraires(centreSportifDTO.getHoraires());
 
             CentreSportif updatedCentre = centreSportifRepository.save(centreSportif);
-            centreEventProducer.sendEvent("UPDATE_TERRAIN_EVENT", centreSportifDTO);
-            centreEventProducer.sendEvent("ALL_TERRAINS_EVENT",getAllCentreSportifs());
+//            centreEventProducer.sendEvent("UPDATE_TERRAIN_EVENT", centreSportifDTO);
+//            centreEventProducer.sendEvent("ALL_TERRAINS_EVENT",getAllCentreSportifs());
             // Update terrains and equipements if needed
             return updatedCentre;
         }

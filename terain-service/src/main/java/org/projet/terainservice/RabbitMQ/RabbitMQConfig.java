@@ -1,8 +1,13 @@
 package org.projet.terainservice.RabbitMQ;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,16 +16,29 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     @Bean
-    public Jackson2JsonMessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
+    }
+
+    @Bean
+    public MessageConverter messageConverter(ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+        RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setMessageConverter(messageConverter);
+        return template;
     }
 
 
     @Bean
-    public TopicExchange terrainEventsExchange() {
-        return new TopicExchange("terrain.events",true,false);
+    public DirectExchange terrainEventsExchange() {
+        return new DirectExchange("terrain.events",true,false);
     }
-
 
     @Bean
     public Queue allTerrainQueue() {
@@ -38,7 +56,12 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindAllTerrainQueue(Queue allTerrainQueue, TopicExchange terrainEventsExchange) {
+    public Queue updateTerrainQueue() {
+        return new Queue("update.terrain.queue", true);
+    }
+
+    @Bean
+    public Binding bindAllTerrainQueue(Queue allTerrainQueue, DirectExchange terrainEventsExchange) {
         return BindingBuilder.
                 bind(allTerrainQueue).
                 to(terrainEventsExchange).
@@ -46,7 +69,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindAddNewTerrainQueue(Queue addNewTerrainQueue, TopicExchange terrainEventsExchange) {
+    public Binding bindAddNewTerrainQueue(Queue addNewTerrainQueue, DirectExchange terrainEventsExchange) {
         return BindingBuilder.
                 bind(addNewTerrainQueue).
                 to(terrainEventsExchange).
@@ -54,10 +77,18 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindAssignTerrainQueue(Queue assignTerrainQueue, TopicExchange terrainEventsExchange) {
+    public Binding bindAssignTerrainQueue(Queue assignTerrainQueue, DirectExchange terrainEventsExchange) {
         return BindingBuilder
                 .bind(assignTerrainQueue)
                 .to(terrainEventsExchange)
                 .with("terrain.assign");
+    }
+
+    @Bean
+    public Binding bindUpdateTerrainQueue(Queue assignTerrainQueue, DirectExchange terrainEventsExchange) {
+        return BindingBuilder
+                .bind(updateTerrainQueue())
+                .to(terrainEventsExchange)
+                .with("terrain.update");
     }
 }
