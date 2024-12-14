@@ -162,6 +162,40 @@ services:
 #      - ADMIN_SERVER_URL=http://admin-server:8080  # Point to admin-server
 #    networks:
 #      - app-network
+
+
+  reservation-service:
+    build:
+      context: ./reservation-service
+    container_name: reservation-service
+    depends_on:
+      - reservation-service-db
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-service-db:5432/reservation
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 00990099
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    networks:
+      - app-network
+
+
+  reservation-service-db:
+    image: postgres:13
+    container_name: reservation-service-db
+    environment:
+      POSTGRES_DB: reservation
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 00990099
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_reservation_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
@@ -169,3 +203,5 @@ networks:
 volumes:
   postgres_center_data:
   postgres_terain_data:
+  postgres_reservation_data:
+
