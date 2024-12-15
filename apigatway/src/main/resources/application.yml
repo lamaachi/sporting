@@ -1,1 +1,48 @@
-spring.application.name=apigatway
+server:
+  port: 8082
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: terrain-service
+          uri: ${SPRING_CLOUD_GATEWAY_ROUTES_TERRAIN_URI}
+          predicates:
+            - Path=/api/terrains/**
+          filters:
+            - StripPrefix=2
+        - id: centre-service
+          uri: ${SPRING_CLOUD_GATEWAY_ROUTES_CENTRE_URI}
+          predicates:
+            - Path=/api/centres/**
+          filters:
+            - StripPrefix=2
+    loadbalancer:
+      retry:
+        enabled: true
+#Eureka server
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://discovery-service:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # This exposes all endpoints
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true  # Ensures the /actuator/gateway endpoint is enabled
