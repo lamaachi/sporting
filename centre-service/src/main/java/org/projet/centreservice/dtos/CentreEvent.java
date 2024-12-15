@@ -12,5 +12,4 @@ import java.io.Serializable;
 public class CentreEvent implements Serializable {
     private String eventType;
     private Object data;
-
 }

@@ -1,3 +1,7 @@
+FROM ubuntu:latest
+LABEL authors="Mouma"
+
+ENTRYPOINT ["top", "-b"]
 # Step 1: Build the application using a Maven image with Java 17
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 
@@ -19,18 +23,15 @@ RUN mvn clean package -DskipTests
 # Step 2: Create the runtime image
 FROM openjdk:17-slim
 
-# Install curl
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
 # Set the working directory
 WORKDIR /app
 
 # Copy the built jar file from the build stage
-COPY --from=build /app/target/admin-server-0.0.1-SNAPSHOT.jar admin-server.jar
-#COPY /target/admin-server-0.0.1-SNAPSHOT.jar admin-service.jar
+COPY --from=build /app/target/reservation-service-0.0.1-SNAPSHOT.jar reservation-service.jar
+#COPY /target/reservation-service-0.0.1-SNAPSHOT.jar reservation-service.jar
 
 # Expose the application's port
-EXPOSE 8080
+EXPOSE 8086
 
 # Command to run the application
-ENTRYPOINT ["java", "-jar", "admin-server.jar"]
+ENTRYPOINT ["java", "-jar", "reservation-service.jar"]

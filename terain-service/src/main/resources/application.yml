@@ -7,6 +7,9 @@ spring:
       allowed-methods: ${SPRING_WEB_CORS_ALLOWED-METHODS:*}
       allowed-headers: ${SPRING_WEB_CORS_ALLOWED-HEADERS:*}
       allow-credentials: ${SPRING_WEB_CORS_ALLOW-CREDENTIALS:true}
+  cloud:
+    discovery:
+      enabled: true
   boot:
     admin:
       client:
@@ -25,10 +28,10 @@ spring:
           max-attempts: 3
           multiplier: 2.0
       acknowledge-mode: auto
-  eureka:
-    client:
-      service-url:
-        defaultZone: ${DISCOVER-SERVER-URL:http://localhost:8761/eureka/}
+#  eureka:
+#    client:
+#      service-url:
+#        defaultZone: ${DISCOVER-SERVER-URL:http://localhost:8761/eureka/}
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/teraindb}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -39,6 +42,13 @@ spring:
       hibernate:
         ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
       show-sql: true
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://discovery-service:8761/eureka/}
   instance:
     prefer-ip-address: true
 server:

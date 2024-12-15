@@ -12,32 +12,32 @@ services:
     networks:
       - app-network
   # Eureka server
-#  discovery-service:
-#    build:
-#      context: ./discovery-Service
-#    container_name: discovery-service
-#    ports:
-#      - "8761:8761"  # Expose Eureka port for registration and discovery
-#    environment:
-#      EUREKA_SERVER_URL: http://discovery-service:8761/eureka
-#    networks:
-#      - app-network
+  discovery-service:
+    build:
+      context: ./discovery-Service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"  # Expose Eureka port for registration and discovery
+    environment:
+      EUREKA_SERVER_URL: http://discovery-service:8761/eureka
+    networks:
+      - app-network
 
-#  admin-server:
-#    build:
-#      context: ./admin-server
-#    container_name: admin-server
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      ADMIN_SERVER_URL: "http://admin-server:8080"
-#    networks:
-#      - app-network
-#    healthcheck:
-#      test: curl -f http://localhost:8080/actuator/health || exit 1
-#      interval: 40s
-#      timeout: 30s
-#      retries: 3
+  admin-server:
+    build:
+      context: ./admin-server
+    container_name: admin-server
+    ports:
+      - "8080:8080"
+    environment:
+      ADMIN_SERVER_URL: "http://admin-server:8080"
+    networks:
+      - app-network
+    healthcheck:
+      test: curl -f http://localhost:8080/actuator/health || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
 
 #  config-server:
 #    build:
@@ -58,27 +58,27 @@ services:
 #    networks:
 #      - app-network
 
-#  terrain-service:
-#    build:
-#      context: ./terain-service
-#    container_name: terrain-service
-#    environment:
-#      SPRING_PROFILES_ACTIVE: docker
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5432/teraindb
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: lamaachi
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: create
-#      SPRING_RABBITMQ_HOST: rabbitmq
-#      SPRING_RABBITMQ_PORT: 5672
-#      SPRING_RABBITMQ_USERNAME: guest
-#      SPRING_RABBITMQ_PASSWORD: guest
-#      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
-#      ADMIN_SERVER_URL: http://admin-server:8080
-#
-#    ports:
-#      - "8084:8084"
-#    networks:
-#      - app-network
+  terrain-service:
+    build:
+      context: ./terain-service
+    container_name: terrain-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5432/teraindb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
+
+    ports:
+      - "8084:8084"
+    networks:
+      - app-network
 #  auth-service:
 #    build:
 #      context: ./auth-service
@@ -99,57 +99,57 @@ services:
 #    networks:
 #      - app-network
 
-#  centre-service:
-#    build:
-#      context: ./centre-service
-#    container_name: centre-service
-#    depends_on:
-##      - config-server
-#      - rabbitmq
-#      - center-service-db
-#    ports:
-#      - "8085:8085"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: docker
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: lamaachi
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: create
-#      SPRING_RABBITMQ_HOST: rabbitmq
-#      SPRING_RABBITMQ_PORT: 5672
-#      SPRING_RABBITMQ_USERNAME: guest
-#      SPRING_RABBITMQ_PASSWORD: guest
-#      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
-#      ADMIN_SERVER_URL: http://admin-server:8080
-#    networks:
-#      - app-network
-#  center-service-db:
-#    image: postgres:13
-#    container_name: center-service-db
-#    environment:
-#      POSTGRES_DB: centredb
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: lamaachi
-#    ports:
-#      - "5433:5432"
-#    volumes:
-#      - postgres_center_data:/var/lib/postgresql/data
-#    networks:
-#      - app-network
+  centre-service:
+    build:
+      context: ./centre-service
+    container_name: centre-service
+    depends_on:
+#      - config-server
+      - rabbitmq
+      - center-service-db
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
+    networks:
+      - app-network
+  center-service-db:
+    image: postgres:13
+    container_name: center-service-db
+    environment:
+      POSTGRES_DB: centredb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lamaachi
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_center_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
-#  terain-service-db:
-#    image: postgres:13
-#    container_name: terain-service-db
-#    environment:
-#      POSTGRES_DB: teraindb
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: lamaachi
-#    ports:
-#      - "5434:5432"
-#    volumes:
-#      - postgres_terain_data:/var/lib/postgresql/data
-#    networks:
-#      - app-network
+  terain-service-db:
+    image: postgres:13
+    container_name: terain-service-db
+    environment:
+      POSTGRES_DB: teraindb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: lamaachi
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_terain_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 #  gateway:
 #    build:
 #      context: ./apigatway
@@ -162,34 +162,6 @@ services:
 #      - ADMIN_SERVER_URL=http://admin-server:8080  # Point to admin-server
 #    networks:
 #      - app-network
-
-
-  payment-service:
-    image: paiment-service:latest # Remplacez par le nom ou chemin correct de l'image
-    build:
-      context: ./paiment-service # Chemin vers le Dockerfile de votre service
-      dockerfile: Dockerfile
-    container_name: paiment-service
-    ports:
-      - "9092:9091" # Mappez le port de l'application
-    environment:
-      - NODE_ENV=production # Remplacez par vos variables d'environnement nécessaires
-    networks:
-      - app-network
-
-  service-auth:
-    image: service-auth:latest # Remplacez par le nom ou chemin correct de l'image
-    build:
-      context: ./service-auth # Chemin vers le Dockerfile de votre service
-      dockerfile: Dockerfile
-    container_name: service-auth
-    ports:
-      - "9093:9090" # Mappez le port de l'application
-    environment:
-      - NODE_ENV=production # Remplacez par vos variables d'environnement nécessaires
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
