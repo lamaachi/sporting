@@ -7,6 +7,16 @@ spring:
       allowed-methods: ${SPRING_WEB_CORS_ALLOWED-METHODS:*}
       allowed-headers: ${SPRING_WEB_CORS_ALLOWED-HEADERS:*}
       allow-credentials: ${SPRING_WEB_CORS_ALLOW-CREDENTIALS:true}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/centredb}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:lamaachi}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create} # Options: 'validate', 'update', 'create', 'create-drop'
+    show-sql: true
   rabbitmq:
     host: localhost       # RabbitMQ host
     port: 5672            # RabbitMQ port
@@ -37,17 +47,6 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: ${EUREKA_INSTANCE_HOSTNAME:centre-service}
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/centredb}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:lamaachi}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:create} # Options: 'validate', 'update', 'create', 'create-drop'
-    show-sql: true
-
 
 server:
   port: 8085
