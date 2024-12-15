@@ -1,5 +1,5 @@
 // ChargeResponseDTO.java
-package org.projet.paimentservice.client;
+package org.projet.paimentservice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

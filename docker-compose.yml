@@ -17,7 +17,6 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
@@ -33,8 +32,6 @@ services:
     ports:
       - "8761:8761"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      ADMIN_SERVER_URL: http://admin-server:8080
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka
     networks:
       - app-network
@@ -46,7 +43,6 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       ADMIN_SERVER_URL: "http://admin-server:8080"
     networks:
       - app-network
@@ -89,8 +85,7 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
-      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://discovery-service:8761/eureka/
-      EUREKA_INSTANCE_HOSTNAME: terain-service
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
 
     ports:
@@ -137,8 +132,7 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
-      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://discovery-service:8761/eureka/
-      EUREKA_INSTANCE_HOSTNAME: centre-service
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
@@ -146,7 +140,6 @@ services:
     image: postgres:13
     container_name: center-service-db
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       POSTGRES_DB: centredb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lamaachi
@@ -161,11 +154,9 @@ services:
     image: postgres:13
     container_name: terain-service-db
     environment:
-      SPRING_PROFILES_ACTIVE: docker
       POSTGRES_DB: teraindb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lamaachi
-
     ports:
       - "5434:5432"
     volumes:
@@ -173,7 +164,7 @@ services:
     networks:
       - app-network
 
-#  api-gateway:
+#  gateway:
 #    build:
 #      context: ./apigatway
 #    container_name: api-gateway
@@ -190,42 +181,6 @@ services:
 #      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://discovery-service:8761/eureka/
 #    networks:
 #      - app-network
-
-
-  reservation-service:
-    build:
-      context: ./reservation-service
-    container_name: reservation-service
-    depends_on:
-      - reservation-service-db
-    ports:
-      - "8086:8086"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-service-db:5432/reservation
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 00990099
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
-
-    networks:
-      - app-network
-
-
-  reservation-service-db:
-    image: postgres:13
-    container_name: reservation-service-db
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      POSTGRES_DB: reservation
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 00990099
-    ports:
-      - "5435:5432"
-    volumes:
-      - postgres_reservation_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
@@ -233,5 +188,3 @@ networks:
 volumes:
   postgres_center_data:
   postgres_terain_data:
-  postgres_reservation_data:
-
