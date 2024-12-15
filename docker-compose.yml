@@ -1,5 +1,18 @@
 version: "3.0"
 services:
+  nginx-service:
+    build:
+      context: ./nginx-service
+      dockerfile: Dockerfile  # Build the custom Nginx image
+    container_name: nginx-service
+    ports:
+      - "8088:80"  # Expose Nginx on port 80
+    depends_on:
+      - terrain-service
+      - centre-service
+    networks:
+      - app-network
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -17,7 +30,7 @@ services:
       context: ./discovery-Service
     container_name: discovery-service
     ports:
-      - "8761:8761"  # Expose Eureka port for registration and discovery
+      - "8761:8761"
     environment:
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka
     networks:
@@ -150,16 +163,22 @@ services:
       - postgres_terain_data:/var/lib/postgresql/data
     networks:
       - app-network
+
 #  gateway:
 #    build:
 #      context: ./apigatway
 #    container_name: api-gateway
 #    ports:
-#      - "8082:8082"  # API Gateway Port
+#      - "8082:8082"
+#    depends_on:
+#      - discovery-service
+#      - centre-service
+#      - terrain-service
 #    environment:
-#      - GATEWAY_SERVER_URL=http://localhost:8082
-#      - CENTRE_SERVICE_URL=http://centre-service:8085  # Point to centre-service
-#      - ADMIN_SERVER_URL=http://admin-server:8080  # Point to admin-server
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_CLOUD_GATEWAY_ROUTES_TERRAIN_URI: http://terain-service:8085
+#      SPRING_CLOUD_GATEWAY_ROUTES_CENTRE_URI: http://centre-service:8084
+#      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://discovery-service:8761/eureka/
 #    networks:
 #      - app-network
 networks:
