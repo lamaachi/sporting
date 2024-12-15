@@ -181,6 +181,33 @@ services:
 #      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://discovery-service:8761/eureka/
 #    networks:
 #      - app-network
+
+  payment-service:
+    build:
+      context: ./payment-service # Chemin vers le Dockerfile de votre service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "9091:9092" # Mappez le port de l'application
+    environment:
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
+    networks:
+      - app-network
+
+  service-auth:
+    build:
+      context: ./service-auth # Chemin vers le Dockerfile de votre service
+      dockerfile: Dockerfile
+    container_name: service-auth
+    ports:
+      - "9090:9093" # Mappez le port de l'application
+    environment:
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

@@ -142,17 +142,10 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+<!--            pour genrer le fichier main avec jar-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Main-Class>org.projet.authservice.ServiceAuthApplication</Main-Class>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
