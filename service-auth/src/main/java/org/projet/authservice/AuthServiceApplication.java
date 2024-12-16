@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 //@EnableConfigurationProperties(JwtConverterProperties.class)
-public class ServiceAuthApplication {
+public class AuthServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ServiceAuthApplication.class, args);
+        SpringApplication.run(AuthServiceApplication.class, args);
     }
 
 }

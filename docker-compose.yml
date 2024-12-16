@@ -1,4 +1,4 @@
-version: "3.0"
+#version: "3.0"
 services:
   nginx-service:
     build:
@@ -117,7 +117,7 @@ services:
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
-      -
+
   center-service-db:
     image: postgres:13
     container_name: center-service-db
