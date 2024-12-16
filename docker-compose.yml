@@ -117,7 +117,6 @@ services:
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
-      -
   center-service-db:
     image: postgres:13
     container_name: center-service-db
@@ -182,9 +181,9 @@ services:
       - "8086:8086"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/reservation
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-service-db:5432/reservationdb
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 00990099
+      SPRING_DATASOURCE_PASSWORD: lamaachi
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
@@ -195,11 +194,11 @@ services:
     image: postgres:13
     container_name: reservation-service-db
     environment:
-      POSTGRES_DB: reservation
+      POSTGRES_DB: reservationdb
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 00990099
+      POSTGRES_PASSWORD: lamaachi
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
       - postgres_center_data:/var/lib/postgresql/data
     networks:
