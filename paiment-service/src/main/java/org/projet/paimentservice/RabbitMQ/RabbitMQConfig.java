@@ -1,8 +1,12 @@
-package org.projet.centreservice.RabbitMQ;
+package org.projet.paimentservice.RabbitMQ;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -11,7 +15,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableRabbit
 public class RabbitMQConfig {
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
@@ -32,66 +38,35 @@ public class RabbitMQConfig {
     }
 
 
-
-
-    // Define the same exchange as in Terrain Service
     @Bean
-    public DirectExchange terrainEventsExchange() {
-        return new DirectExchange("terrain.events", true, false);
+    public DirectExchange paymentEventsExchange() {
+        return new DirectExchange("payment.events.exchange",true,false);
     }
 
-    // Define the same queues as in Terrain Service
     @Bean
     public Queue allTerrainQueue() {
         return new Queue("all.terrain.queue", true);
     }
 
     @Bean
-    public Queue addNewTerrainQueue() {
-        return new Queue("add.new.terrain.queue", true);
-    }
-
-    @Bean
-    public Queue assignTerrainQueue() {
-        return new Queue("assign.terrain.queue", true);
-    }
-
-    @Bean
-    public Queue updateTerrainQueue() {
-        return new Queue("update.terrain.queue", true);
-    }
-
-    // Define the same bindings as in Terrain Service
-    @Bean
     public Binding bindAllTerrainQueue(Queue allTerrainQueue, DirectExchange terrainEventsExchange) {
-        return BindingBuilder
-                .bind(allTerrainQueue)
-                .to(terrainEventsExchange)
-                .with("terrain.all");
+        return BindingBuilder.
+                bind(allTerrainQueue).
+                to(terrainEventsExchange).
+                with("terrain.all");
     }
 
     @Bean
-    public Binding bindAddNewTerrainQueue(Queue addNewTerrainQueue, DirectExchange terrainEventsExchange) {
-        return BindingBuilder
-                .bind(addNewTerrainQueue)
-                .to(terrainEventsExchange)
-                .with("terrain.add");
+    public Queue paymentQueue() {
+        return new Queue("new.payment.queue", true);
     }
 
     @Bean
-    public Binding bindAssignTerrainQueue(Queue assignTerrainQueue, DirectExchange terrainEventsExchange) {
+    public Binding bindPaymentQueue(Queue paymentQueue, DirectExchange paymentEventsExchange) {
         return BindingBuilder
-                .bind(assignTerrainQueue)
-                .to(terrainEventsExchange)
-                .with("terrain.assign");
-    }
-
-    @Bean
-    public Binding bindUpdateTerrainQueue(Queue assignTerrainQueue, DirectExchange terrainEventsExchange) {
-        return BindingBuilder
-                .bind(updateTerrainQueue())
-                .to(terrainEventsExchange)
-                .with("terrain.update");
+                .bind(paymentQueue)
+                .to(paymentEventsExchange)
+                .with("payment.new");
     }
 
     @Bean
@@ -107,7 +82,6 @@ public class RabbitMQConfig {
                 .with("reservation.new");
     }
 
-
     @Bean
     public Queue adminAuthQueue() {
         return new Queue("auth.admin.queue");
@@ -117,4 +91,5 @@ public class RabbitMQConfig {
     public Binding adminAuthBinding(Queue adminAuthQueue, DirectExchange authExchange) {
         return BindingBuilder.bind(adminAuthQueue).to(authExchange).with("auth.admin");
     }
+
 }

@@ -117,7 +117,6 @@ services:
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
-      -
   center-service-db:
     image: postgres:13
     container_name: center-service-db
@@ -145,10 +144,9 @@ services:
       - postgres_terain_data:/var/lib/postgresql/data
     networks:
       - app-network
-
   payment-service:
     build:
-      context: ./payment-service # Chemin vers le Dockerfile de votre service
+      context: ./paiment-service # Chemin vers le Dockerfile de votre service
       dockerfile: Dockerfile
     container_name: payment-service
     ports:

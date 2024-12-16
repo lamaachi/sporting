@@ -1,3 +1,5 @@
+
+
 # Étape 1 : Utilisation d'une image de base Java
 FROM openjdk:17-jdk-slim as builder
 
@@ -5,6 +7,8 @@ FROM openjdk:17-jdk-slim as builder
 WORKDIR /app
 
 # Étape 3 : Copier le fichier JAR généré dans le conteneur
+
+
 # (Remplacez `target/paimentservice.jar` par le chemin réel vers votre fichier JAR)
 COPY target/service-auth-0.0.1-SNAPSHOT.jar auth.jar
 
