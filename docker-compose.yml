@@ -148,9 +148,9 @@ services:
 
   payment-service:
     build:
-      context: ./payment-service # Chemin vers le Dockerfile de votre service
+      context: ./paiment-service # Chemin vers le Dockerfile de votre service
       dockerfile: Dockerfile
-    container_name: payment-service
+    container_name: paiment-service
     ports:
       - "9091:9092" # Mappez le port de l'application
     environment:
