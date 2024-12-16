@@ -1,15 +1,32 @@
-# Étape 1 : Utilisation d'une image de base Java
-FROM openjdk:17-jdk-slim as builder
+# Step 1: Build the application using Maven with Java 17
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 
-# Étape 2 : Définir le répertoire de travail dans le conteneur
+# Set the working directory
 WORKDIR /app
 
-# Étape 3 : Copier le fichier JAR généré dans le conteneur
-# (Remplacez `target/paimentservice.jar` par le chemin réel vers votre fichier JAR)
-COPY target/paiment-service-0.0.1-SNAPSHOT.jar payment.jar
+# Copy the project files to the working directory
+COPY pom.xml .
 
-# Étape 4 : Exposer le port utilisé par le service
+# Download the dependencies (this step will be cached unless pom.xml changes)
+RUN mvn dependency:go-offline
+
+# Copy the source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Step 2: Use the Java image to run the application
+FROM openjdk:17-jdk-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the built JAR file from the build stage
+COPY --from=build /app/target/paiment-service-0.0.1-SNAPSHOT.jar payment-service.jar
+
+# Expose the application port
 EXPOSE 9091
 
-# Étape 5 : Définir la commande pour exécuter l'application
-ENTRYPOINT ["java", "-jar", "payment.jar"]
+# Define the command to run the application
+ENTRYPOINT ["java", "-jar", "payment-service.jar"]
