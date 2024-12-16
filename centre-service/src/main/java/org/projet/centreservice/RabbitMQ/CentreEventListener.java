@@ -142,4 +142,20 @@ public class CentreEventListener {
             e.printStackTrace();
         }
     }
+
+    @RabbitListener(queues = "new.reservation.queue")
+    public void handleNewReservationMessage(String message) {
+        try {
+
+            System.out.println("[New Reservation Queue] Message received: " + message);
+
+        } catch (Exception e) {
+            System.err.println("Error processing new reservation message: " + e.getMessage());
+        }
+    }
+
+    @RabbitListener(queues = "auth.admin.queue") // Define the queue to listen to
+    public void handleAdminAuthEvent(String message) {
+        System.out.println("Received Admin Auth Event: " + message);
+    }
 }

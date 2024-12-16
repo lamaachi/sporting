@@ -1,4 +1,4 @@
-#version: "3.0"
+version: "3.0"
 services:
   nginx-service:
     build:
@@ -117,7 +117,7 @@ services:
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
-
+      -
   center-service-db:
     image: postgres:13
     container_name: center-service-db
@@ -148,9 +148,9 @@ services:
 
   payment-service:
     build:
-      context: ./paiment-service # Chemin vers le Dockerfile de votre service
+      context: ./payment-service # Chemin vers le Dockerfile de votre service
       dockerfile: Dockerfile
-    container_name: paiment-service
+    container_name: payment-service
     ports:
       - "9091:9092" # Mappez le port de l'application
     environment:

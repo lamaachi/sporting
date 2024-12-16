@@ -1,7 +1,3 @@
-FROM ubuntu:latest
-LABEL authors="Mouma"
-
-ENTRYPOINT ["top", "-b"]
 # Step 1: Build the application using a Maven image with Java 17
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 

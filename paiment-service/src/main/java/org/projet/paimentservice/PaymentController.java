@@ -3,6 +3,7 @@ package org.projet.paimentservice;
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.PaymentMethod;
+import org.projet.paimentservice.RabbitMQ.PaymentEventProducer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,17 @@ import java.util.Map;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
+
+
+    private final PaymentEventProducer paymentEventProducer;
+
     // Clé secrète Stripe
     @Value("${stripe.api.key}")
     private String stripeSecretKey;
+
+    public PaymentController(PaymentEventProducer paymentEventProducer) {
+        this.paymentEventProducer = paymentEventProducer;
+    }
 
     @PostMapping("/addCard")
     public ResponseEntity<?> addCard(@RequestBody Map<String, String> payload) {
@@ -77,6 +86,15 @@ public class PaymentController {
 
             // Vérifier si le paiement a réussi
             if ("succeeded".equals(paymentIntent.getStatus())) {
+                // Construct the event payload
+                String eventMessage = String.format(
+                        "Payment confirmed with ID: %s, Amount: %.2f",
+                        paymentIntent.getId(),
+                        paymentIntent.getAmount() / 100.0 // Convert Stripe amount (in cents) to standard format
+                );
+
+                // Publish event to RabbitMQ
+                paymentEventProducer.publish("payment.new", eventMessage);
                 return ResponseEntity.ok(Map.of("message", "Reservation confirmed and paid successfully."));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
