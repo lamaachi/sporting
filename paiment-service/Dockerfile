@@ -22,7 +22,9 @@ FROM openjdk:17-slim
 WORKDIR /app
 
 # Copy the built jar file from the build stage
-COPY --from=build /app/target/paiment-service-0.0.1-SNAPSHOT.jar payment.jar
+#COPY --from=build /app/target/paiment-service-0.0.1-SNAPSHOT.jar payment.jar
+COPY /target/paiment-service-0.0.1-SNAPSHOT.jar payment.jar
+
 
 # Étape 4 : Exposer le port utilisé par le service
 EXPOSE 9091
