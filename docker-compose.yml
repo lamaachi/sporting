@@ -117,6 +117,7 @@ services:
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
       - app-network
+
   center-service-db:
     image: postgres:13
     container_name: center-service-db
@@ -125,9 +126,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lamaachi
     ports:
-      - "5433:5432"
+      - "5436:5432"
     volumes:
-      - postgres_center_data:/var/lib/postgresql/data
+      - centre_data:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -145,7 +146,7 @@ services:
     networks:
       - app-network
 
-  payment-service:
+  paiment-service:
     build:
       context: ./paiment-service # Chemin vers le Dockerfile de votre service
       dockerfile: Dockerfile
@@ -153,6 +154,10 @@ services:
     ports:
       - "9091:9092" # Mappez le port de l'application
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
@@ -166,6 +171,10 @@ services:
     ports:
       - "9090:9093" # Mappez le port de l'application
     environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
@@ -181,10 +190,14 @@ services:
       - "8086:8086"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-service-db:5432/reservationdb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-service-db:5432/reservation
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_DATASOURCE_PASSWORD: 00990099
       SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
     networks:
@@ -194,13 +207,13 @@ services:
     image: postgres:13
     container_name: reservation-service-db
     environment:
-      POSTGRES_DB: reservationdb
+      POSTGRES_DB: reservation
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: lamaachi
+      POSTGRES_PASSWORD: 00990099
     ports:
       - "5435:5432"
     volumes:
-      - postgres_center_data:/var/lib/postgresql/data
+      - postgres_reservation_data:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -210,5 +223,6 @@ networks:
 
 volumes:
   postgres_center_data:
+  centre_data:
   postgres_terain_data:
   postgres_reservation_data:
