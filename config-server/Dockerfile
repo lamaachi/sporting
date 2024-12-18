@@ -1,18 +1,19 @@
-# Step 1: Build the application using Maven
+
+## Step 1: Build the application using Maven
 FROM maven:3.9.4-eclipse-temurin-17 AS build
-
-# Set the working directory
+#
+## Set the working directory
 WORKDIR /app
-
-# Copy the project files to the working directory
+#
+## Copy the project files to the working directory
 COPY pom.xml .
-
-# Download the dependencies (this step will be cached unless pom.xml changes)
+#
+## Download the dependencies (this step will be cached unless pom.xml changes)
 RUN mvn dependency:go-offline
-
+#
 COPY src ./src
-
-# Build the application
+#
+## Build the application
 RUN mvn clean package -DskipTests
 
 # Step 2: Create the runtime image
