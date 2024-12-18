@@ -1,5 +1,23 @@
 version: "3.0"
 services:
+  config-server:
+    build:
+      context: ./config-server
+    container_name: config-server
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_PROFILES_ACTIVE: git
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://discovery-service:8761/eureka
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/lamaachi/sporting-config-repo
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL: main
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
   nginx-service:
     build:
       context: ./nginx-service
@@ -52,59 +70,17 @@ services:
       timeout: 30s
       retries: 3
 
-#  config-server:
-#    build:
-#      context: ./config-server
-#    container_name: config-server
-#    ports:
-#      - "9000:9000"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: native
-#      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: https://github.com/lamaachi/sporting-config-repo
-#    volumes:
-#      - ./config-repo:/app/config-repo
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://config-server:9000/actuator/health" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 3
-#    networks:
-#      - app-network
 
-  terrain-service:
-    build:
-      context: ./terain-service
-    container_name: terrain-service
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5432/teraindb
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: lamaachi
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: guest
-      SPRING_RABBITMQ_PASSWORD: guest
-      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
-      ADMIN_SERVER_URL: http://admin-server:8080
-
-    ports:
-      - "8084:8084"
-    networks:
-      - app-network
 
   centre-service:
     build:
       context: ./centre-service
     container_name: centre-service
-    depends_on:
-#      - config-server
-      - rabbitmq
-      - center-service-db
     ports:
       - "8085:8085"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:9000
       SPRING_DATASOURCE_URL: jdbc:postgresql://center-service-db:5432/centredb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: lamaachi
@@ -115,6 +91,33 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      - app-network
+  terrain-service:
+    build:
+      context: ./terain-service
+    container_name: terrain-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:9000
+      SPRING_DATASOURCE_URL: jdbc:postgresql://terain-service-db:5432/teraindb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lamaachi
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
+      ADMIN_SERVER_URL: http://admin-server:8080
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
     networks:
       - app-network
 
@@ -154,12 +157,16 @@ services:
     ports:
       - "9091:9092" # Mappez le port de l'application
     environment:
+#      SPRING_CONFIG_IMPORT: configserver:http://config-server:9000
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
+    depends_on:
+      config-server:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -171,12 +178,16 @@ services:
     ports:
       - "9090:9093" # Mappez le port de l'application
     environment:
+#      SPRING_CONFIG_IMPORT: configserver:http://config-server:9000
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
+    depends_on:
+      config-server:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -185,11 +196,13 @@ services:
       context: ./reservation-service
     container_name: reservation-service
     depends_on:
-      - reservation-service-db
+      config-server:
+        condition: service_healthy
     ports:
       - "8086:8086"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+#      SPRING_CONFIG_IMPORT: configserver:http://config-server:9000
       SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-service-db:5432/reservation
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 00990099
@@ -200,6 +213,7 @@ services:
       SPRING_RABBITMQ_PASSWORD: guest
       DISCOVER-SERVER-URL: http://discovery-service:8761/eureka
       ADMIN_SERVER_URL: http://admin-server:8080
+
     networks:
       - app-network
 

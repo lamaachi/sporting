@@ -1,3 +1,4 @@
+
 ## Step 1: Build the application using Maven
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 #
@@ -17,6 +18,11 @@ RUN mvn clean package -DskipTests
 
 # Step 2: Create the runtime image
 FROM openjdk:17-slim
+
+# Install curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+
 # Set the working directory
 WORKDIR /app
 
