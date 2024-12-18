@@ -10,6 +10,8 @@ spring:
   cloud:
     discovery:
       enabled: true
+    config:
+      import: optional:configserver:http://config-server:9000
   boot:
     admin:
       client:
@@ -26,8 +28,6 @@ spring:
           enabled: true
           initial-interval: 1000
           max-attempts: 3
-          multiplier: 2.0
-      acknowledge-mode: auto
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/teraindb}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
@@ -47,9 +47,8 @@ eureka:
       defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://discovery-service:8761/eureka/}
   instance:
     prefer-ip-address: true
-server:
-  port: 8084
-
+#server:
+#  port: 8084
 Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
 terrain:
   exchange: event_terrain_exchange

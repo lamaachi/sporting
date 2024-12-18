@@ -27,7 +27,7 @@ COPY --from=build /app/target/centre-service-0.0.1-SNAPSHOT.jar centre-service.j
 #COPY /target/centre-service-0.0.1-SNAPSHOT.jar centre-service.jar
 
 # Expose the application's port
-EXPOSE 8082
+EXPOSE 8085
 
 # Command to run the application
 ENTRYPOINT ["java", "-jar", "centre-service.jar"]

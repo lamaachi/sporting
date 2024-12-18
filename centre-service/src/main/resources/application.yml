@@ -34,6 +34,8 @@ spring:
   cloud:
     discovery:
       enabled: true
+    config:
+      import: optional:configserver:http://config-server:9000
   boot:
     admin:
       client:
@@ -48,8 +50,8 @@ eureka:
     preferIpAddress: true
     hostname: ${EUREKA_INSTANCE_HOSTNAME:centre-service}
 
-server:
-  port: 8085
+#server:
+#  port: 8085
 
 # Additional Headers for CORS
 Access-Control-Allow-Headers: X-PINGOTHER, Content-Type
