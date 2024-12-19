@@ -40,15 +40,15 @@ spring:
     admin:
       client:
         url: ${ADMIN_SERVER_URL:http://localhost:8080}
+
 eureka:
   client:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://discovery-service:8761/eureka/}
+      defaultZone: ${DISCOVER-SERVER-URL:http://discovery-service:8761/eureka/}
   instance:
-    preferIpAddress: true
-    hostname: ${EUREKA_INSTANCE_HOSTNAME:centre-service}
+    prefer-ip-address: true
 
 #server:
 #  port: 8085
