@@ -53,7 +53,6 @@ services:
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka
     networks:
       - app-network
-
   admin-server:
     build:
       context: ./admin-server
